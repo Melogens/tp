@@ -46,7 +46,7 @@
 <a href="#features" id="markdown-toc-features">Features</a>    <ul>
       <li><a href="#viewing-help-help" id="markdown-toc-viewing-help-help">Viewing help: <code class="language-plaintext highlighter-rouge">help</code></a></li>
       <li><a href="#adding-a-friend-add" id="markdown-toc-adding-a-friend-add">Adding a friend: <code class="language-plaintext highlighter-rouge">add</code></a></li>
-      <li><a href="#listing-all-friends-list" id="markdown-toc-listing-all-friends-list">Listing all friends: <code class="language-plaintext highlighter-rouge">list</code></a></li>
+      <li><a href="#listing-and-filtering-friends-list" id="markdown-toc-listing-and-filtering-friends-list">Listing and filtering friends: <code class="language-plaintext highlighter-rouge">list</code></a></li>
       <li><a href="#editing-a-friend-edit" id="markdown-toc-editing-a-friend-edit">Editing a friend: <code class="language-plaintext highlighter-rouge">edit</code></a></li>
       <li><a href="#locating-friends-by-name-find" id="markdown-toc-locating-friends-by-name-find">Locating friends by name: <code class="language-plaintext highlighter-rouge">find</code></a></li>
       <li><a href="#deleting-a-friend-delete" id="markdown-toc-deleting-a-friend-delete">Deleting a friend: <code class="language-plaintext highlighter-rouge">delete</code></a></li>
@@ -89,6 +89,9 @@ Some example commands you can try:</p>
     <ul>
       <li>
         <p><code class="language-plaintext highlighter-rouge">list</code> : Lists all contacts.</p>
+      </li>
+      <li>
+        <p><code class="language-plaintext highlighter-rouge">list g/Valorant</code> : Lists friends who play Valorant.</p>
       </li>
       <li>
         <p><code class="language-plaintext highlighter-rouge">add n/John Doe p/98765432 e/johnd@example.com</code> : Adds a contact named <code class="language-plaintext highlighter-rouge">John Doe</code> to GameMates.</p>
@@ -135,7 +138,7 @@ For example, <code class="language-plaintext highlighter-rouge">[t/TAG]…​</c
 For example, if the command specifies <code class="language-plaintext highlighter-rouge">n/NAME p/PHONE_NUMBER</code>, <code class="language-plaintext highlighter-rouge">p/PHONE_NUMBER n/NAME</code> is also acceptable.</p>
     </li>
     <li>
-      <p>Extraneous parameters for commands that take no parameters, such as <code class="language-plaintext highlighter-rouge">help</code>, <code class="language-plaintext highlighter-rouge">list</code>, <code class="language-plaintext highlighter-rouge">exit</code>, and <code class="language-plaintext highlighter-rouge">clear</code>, are ignored.<br>
+      <p>Extraneous parameters for commands that take no parameters, such as <code class="language-plaintext highlighter-rouge">help</code>, <code class="language-plaintext highlighter-rouge">exit</code>, and <code class="language-plaintext highlighter-rouge">clear</code>, are ignored.<br>
 For example, <code class="language-plaintext highlighter-rouge">help 123</code> is interpreted as <code class="language-plaintext highlighter-rouge">help</code>.</p>
     </li>
     <li>
@@ -222,25 +225,55 @@ and <a href="https://www.rfc-editor.org/rfc/rfc5321#section-4.5.3.1">RFC 5321’
 The 254-character address limit leaves room for the enclosing <code class="language-plaintext highlighter-rouge">&lt;</code> and <code class="language-plaintext highlighter-rouge">&gt;</code> in the 256-octet SMTP path limit.
 </div>
 
-<h3 id="listing-all-friends-list">Listing all friends: <code class="language-plaintext highlighter-rouge">list</code>
+<h3 id="listing-and-filtering-friends-list">Listing and filtering friends: <code class="language-plaintext highlighter-rouge">list</code>
 </h3>
 
-<p>Shows a list of all friends in GameMates.</p>
+<p>Shows all friends in GameMates, or filters the friend list by game.</p>
 
-<p>Format: <code class="language-plaintext highlighter-rouge">list</code></p>
+<p>Format: <code class="language-plaintext highlighter-rouge">list [g/GAME_NAME]</code></p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">list</code> shows all friends and clears any previous friend-list filter.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">list g/GAME_NAME</code> shows friends who have a game with that exact name. The match is case-insensitive, so <code class="language-plaintext highlighter-rouge">list g/valorant</code> matches <code class="language-plaintext highlighter-rouge">Valorant</code>.</li>
+  <li>Leading and trailing spaces in <code class="language-plaintext highlighter-rouge">GAME_NAME</code> are ignored, but partial names do not match. For example, <code class="language-plaintext highlighter-rouge">list g/Val</code> does not match <code class="language-plaintext highlighter-rouge">Valorant</code>.</li>
+  <li>Only game names are matched; a friend’s in-game username is not matched.</li>
+  <li>Multi-word game names are accepted. Only one <code class="language-plaintext highlighter-rouge">g/</code> prefix may be supplied, and the game name must not be empty.</li>
+  <li>If no friends play the specified game, the friend list is empty and the command reports <code class="language-plaintext highlighter-rouge">0 friend(s) listed!</code>.</li>
+  <li>Filtering applies only to the friend list. It does not filter or modify the separately stored Myself profile.</li>
+</ul>
+
+<p>Examples:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">list</code> shows all friends.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">list g/Valorant</code> shows friends who play <code class="language-plaintext highlighter-rouge">Valorant</code>.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">list g/Stardew Valley</code> shows friends who play <code class="language-plaintext highlighter-rouge">Stardew Valley</code>.</li>
+</ul>
 
 <h3 id="editing-a-friend-edit">Editing a friend: <code class="language-plaintext highlighter-rouge">edit</code>
 </h3>
 
 <p>Edits an existing friend in GameMates.</p>
 
-<p>Format: <code class="language-plaintext highlighter-rouge">edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [t/TAG]…​</code></p>
+<p>Format: <code class="language-plaintext highlighter-rouge">edit FRIEND_INDEX [n/NAME] [p/[PHONE]] [e/[EMAIL]] [t/TAG]…​</code></p>
 
 <ul>
-  <li>Edits the friend at the specified <code class="language-plaintext highlighter-rouge">INDEX</code>. The index refers to the index number shown in the displayed friend list. The index <strong>must be a positive integer</strong> 1, 2, 3, …​</li>
+  <li>Edits the friend at the specified <code class="language-plaintext highlighter-rouge">FRIEND_INDEX</code>. The index refers to the index number shown in the displayed friend list. The index <strong>must be a positive integer</strong> 1, 2, 3, …​</li>
   <li>At least one of the optional fields must be provided.</li>
-  <li>Existing values will be updated to the input values.</li>
-  <li>When editing tags, all of the friend’s existing tags are removed; adding tags is not cumulative.</li>
+  <li>Supplied values are trimmed and validated using the same rules as <code class="language-plaintext highlighter-rouge">add</code>.</li>
+  <li>Omitted fields remain unchanged. Enter <code class="language-plaintext highlighter-rouge">p/</code> or <code class="language-plaintext highlighter-rouge">e/</code> without a value to remove that contact detail.</li>
+  <li>A name cannot be removed. The new name must be unique among other friends, ignoring case and repeated spaces.</li>
+  <li>Games remain unchanged when editing friend details.</li>
+  <li>Success feedback starts with <code class="language-plaintext highlighter-rouge">Edited NAME</code> and lists only changed details. Removed contact details are reported
+as <code class="language-plaintext highlighter-rouge">removed phone number</code> or <code class="language-plaintext highlighter-rouge">removed email</code>.</li>
+  <li>An index is required to point at the profile to be edited. Editing your own profile without an index is not currently supported.</li>
+  <li>Omit <code class="language-plaintext highlighter-rouge">t/</code> to keep the friend’s existing tags. Each supplied <code class="language-plaintext highlighter-rouge">t/TAG</code> removes that tag if the friend already has it, or adds it if they do not. Other tags remain unchanged.</li>
+  <li>Tag matching is case-sensitive. Repeating the same tag in one command applies it only once.</li>
   <li>To remove all of a friend’s tags, enter <code class="language-plaintext highlighter-rouge">t/</code> without a tag after it.</li>
 </ul>
 
@@ -250,6 +283,27 @@ The 254-character address limit leaves room for the enclosing <code class="langu
 <code class="language-plaintext highlighter-rouge">edit 1 p/91234567 e/johndoe@example.com</code> Edits the phone number and email address of the 1st friend to be <code class="language-plaintext highlighter-rouge">91234567</code> and <code class="language-plaintext highlighter-rouge">johndoe@example.com</code> respectively.</li>
   <li>
 <code class="language-plaintext highlighter-rouge">edit 2 n/Betsy Crower t/</code> Edits the name of the 2nd friend to be <code class="language-plaintext highlighter-rouge">Betsy Crower</code> and clears all existing tags.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">edit 2 p/ e/</code> removes the 2nd friend’s phone number and email.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">edit 2 t/teammate</code> removes <code class="language-plaintext highlighter-rouge">teammate</code> if the 2nd friend already has it, or adds it otherwise. Other tags remain unchanged.</li>
+</ul>
+
+<p>Errors:</p>
+
+<ul>
+  <li>Missing index: <code class="language-plaintext highlighter-rouge">Please provide an index.</code>
+</li>
+  <li>Invalid index: <code class="language-plaintext highlighter-rouge">Index must be a positive integer.</code>
+</li>
+  <li>Empty displayed list: <code class="language-plaintext highlighter-rouge">No friends are currently displayed. Use list to show all friends.</code>
+</li>
+  <li>Index outside the displayed list: <code class="language-plaintext highlighter-rouge">No friend exists at index INDEX. Choose an index from 1 to MAX_LIST_INDEX.</code>
+</li>
+  <li>No fields provided: <code class="language-plaintext highlighter-rouge">No details were passed to the command. Specify at least one parameter ([n/NAME], [p/[PHONE]], [e/[EMAIL]], [t/TAG]...) to edit specific details.</code>
+</li>
+  <li>Duplicate name: <code class="language-plaintext highlighter-rouge">This friend already exists in GameMates.</code>
+</li>
 </ul>
 
 <h3 id="locating-friends-by-name-find">Locating friends by name: <code class="language-plaintext highlighter-rouge">find</code>
@@ -317,7 +371,7 @@ The 254-character address limit leaves room for the enclosing <code class="langu
 <h3 id="clearing-all-entries-clear">Clearing all entries: <code class="language-plaintext highlighter-rouge">clear</code>
 </h3>
 
-<p>Clears all entries from GameMates.</p>
+<p>Clears all friends from GameMates and preserves your Myself profile.</p>
 
 <p>Format: <code class="language-plaintext highlighter-rouge">clear</code></p>
 
@@ -334,7 +388,8 @@ The 254-character address limit leaves room for the enclosing <code class="langu
 
 <h3 id="editing-the-data-file">Editing the data file</h3>
 
-<p>GameMates data is saved automatically as a JSON file <code class="language-plaintext highlighter-rouge">[JAR file location]/data/gamemates.json</code>. The friend list is stored under the <code class="language-plaintext highlighter-rouge">friends</code> key. Advanced users are welcome to update data directly by editing that data file.</p>
+<p>GameMates data is saved automatically as a JSON file <code class="language-plaintext highlighter-rouge">[JAR file location]/data/gamemates.json</code>. The friend list is stored under the <code class="language-plaintext highlighter-rouge">friends</code> key, and your profile is stored separately under <code class="language-plaintext highlighter-rouge">myself</code>. 
+Advanced users are welcome to update data directly by editing that data file.</p>
 
 <div class="alert alert-warning">
 <img class="emoji" title=":exclamation:" alt=":exclamation:" src="https://github.githubassets.com/images/icons/emoji/unicode/2757.png" height="20" width="20"> <strong>Caution:</strong>
@@ -396,7 +451,7 @@ Furthermore, certain edits can cause GameMates to behave in unexpected ways (e.g
     <tr>
       <td><strong>Edit</strong></td>
       <td>
-<code class="language-plaintext highlighter-rouge">edit INDEX [n/NAME] [p/PHONE_NUMBER] [e/EMAIL] [t/TAG]…​</code><br> e.g., <code class="language-plaintext highlighter-rouge">edit 2 n/James Lee e/jameslee@example.com</code>
+<code class="language-plaintext highlighter-rouge">edit FRIEND_INDEX [n/NAME] [p/[PHONE_NUMBER]] [e/[EMAIL]] [t/TAG]…​</code><br> e.g., <code class="language-plaintext highlighter-rouge">edit 2 n/James Lee e/jameslee@example.com</code>
 </td>
     </tr>
     <tr>
@@ -407,7 +462,9 @@ Furthermore, certain edits can cause GameMates to behave in unexpected ways (e.g
     </tr>
     <tr>
       <td><strong>List</strong></td>
-      <td><code class="language-plaintext highlighter-rouge">list</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">list [g/GAME_NAME]</code><br> e.g., <code class="language-plaintext highlighter-rouge">list g/Valorant</code>
+</td>
     </tr>
     <tr>
       <td><strong>Help</strong></td>
